@@ -3,7 +3,10 @@
  * REST API client connecting Next.js Frontend to Express Backend
  */
 
-const rawBaseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+let rawBaseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+if (!rawBaseUrl.startsWith("http://") && !rawBaseUrl.startsWith("https://")) {
+  rawBaseUrl = `https://${rawBaseUrl}`;
+}
 export const API_BASE_URL = rawBaseUrl.replace(/\/api\/?$/, "").replace(/\/+$/, "");
 export const DEFAULT_MAKER_KEY = "mk_default_ukk_2026";
 
