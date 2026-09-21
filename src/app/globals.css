@@ -1,0 +1,127 @@
+@import "tailwindcss";
+
+@variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --color-canvas: #FBFBFC;
+  --color-surface: #FFFFFF;
+  --color-surface-dark: #0B0D0F;
+  --color-accent-lime: #D2F842;
+  --color-accent-lime-hover: #BCE332;
+  --color-text-primary: #111315;
+  --color-text-secondary: #6C7278;
+  --color-border-hairline: #E5E7EB;
+  --color-input-dark: #16181D;
+
+  --animate-marquee: marquee 28s linear infinite;
+  --animate-marquee-vertical: marquee-vertical 28s linear infinite;
+}
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(calc(-100% - var(--gap, 1rem)));
+  }
+}
+
+@keyframes marquee-vertical {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(calc(-100% - var(--gap, 1rem)));
+  }
+}
+
+:root {
+  --canvas: #FBFBFC;
+  --surface: #FFFFFF;
+  --surface-dark: #0B0D0F;
+  --accent-lime: #D2F842;
+  --accent-lime-hover: #BCE332;
+  --text-primary: #111315;
+  --text-secondary: #6C7278;
+  --border-hairline: #E5E7EB;
+  --input-dark: #16181D;
+}
+
+html {
+  scroll-behavior: smooth;
+  background-color: #FBFBFC;
+  color: #111315;
+}
+
+html.lenis, html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
+}
+
+body {
+  background-color: #FBFBFC;
+  color: #111315;
+  font-family: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, "Plus Jakarta Sans", "Segoe UI", Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::selection {
+  background-color: #D2F842;
+  color: #0B0D0F;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+@media print {
+  @page {
+    margin: 1cm;
+    size: auto;
+  }
+  
+  body {
+    background: #FFFFFF !important;
+    color: #000000 !important;
+  }
+
+  .print\:hidden,
+  header,
+  footer,
+  nav,
+  aside,
+  .no-print {
+    display: none !important;
+  }
+
+  .printable-area {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+    border: none !important;
+  }
+}
+
