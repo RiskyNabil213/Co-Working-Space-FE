@@ -3,8 +3,8 @@
  * REST API client connecting Next.js Frontend to Express Backend
  */
 
-export const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+const rawBaseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+export const API_BASE_URL = rawBaseUrl.replace(/\/api\/?$/, "").replace(/\/+$/, "");
 export const DEFAULT_MAKER_KEY = "mk_default_ukk_2026";
 
 // Helper to get active Maker Key
@@ -80,7 +80,11 @@ async function apiRequest<T = any>(
     headers["Authorization"] = `Bearer ${token}`;
   }
 
-  const url = `${API_BASE_URL}${endpoint.startsWith("/") ? "" : "/"}${endpoint}`;
+  let cleanEndpoint = endpoint.startsWith("/") ? endpoint : `/${endpoint}`;
+  if (!cleanEndpoint.startsWith("/api")) {
+    cleanEndpoint = `/api${cleanEndpoint}`;
+  }
+  const url = `${API_BASE_URL}${cleanEndpoint}`;
 
   try {
     const res = await fetch(url, {
@@ -88,11 +92,21 @@ async function apiRequest<T = any>(
       headers,
     });
 
-    const result = await res.json().catch(() => ({
-      status: false,
-      success: false,
-      message: `Error parsing server response (${res.status})`,
-    }));
+    const text = await res.text();
+    let result: any = null;
+    try {
+      result = JSON.parse(text);
+    } catch {
+      return {
+        status: false,
+        success: false,
+        message:
+          res.status === 404
+            ? `Endpoint backend '${url}' tidak ditemukan (404). Pastikan NEXT_PUBLIC_API_URL pada Variables Railway diisi URL backend (bukan URL frontend).`
+            : `Gagal membaca respon server (${res.status})`,
+        error: `HTTP ${res.status}`,
+      };
+    }
 
     const isSuccess = res.ok && result.status !== false;
 
