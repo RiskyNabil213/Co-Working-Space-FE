@@ -90,7 +90,7 @@ export default function OtpVerificationModal({
         if (i < 6) newOtp[i] = c;
       });
       setOtp(newOtp);
-      const nextIdx = Math.min(chars.length, 5);
+      const nextIdx = Math.min(chars.length - 1, 5);
       inputRefs.current[nextIdx]?.focus();
       return;
     }
@@ -106,19 +106,11 @@ export default function OtpVerificationModal({
     }
   };
 
-  const autofillCode = (code: string) => {
-    const digits = code.split("").slice(0, 6);
-    const newOtp = ["", "", "", "", "", ""];
-    digits.forEach((d, i) => {
-      newOtp[i] = d;
-    });
-    setOtp(newOtp);
-    inputRefs.current[5]?.focus();
-  };
-
   const handleKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Backspace" && !otp[index] && index > 0) {
-      inputRefs.current[index - 1]?.focus();
+    if (e.key === "Backspace") {
+      if (!otp[index] && index > 0) {
+        inputRefs.current[index - 1]?.focus();
+      }
     }
   };
 
@@ -139,15 +131,9 @@ export default function OtpVerificationModal({
         throw new Error(res.message || "Gagal mengirim kode OTP");
       }
 
-      const receivedOtp = (res as any).debugOtp || (res.data as any)?.debugOtp;
-      if (receivedOtp) {
-        setDebugCode(receivedOtp);
-        autofillCode(receivedOtp);
-      }
-
-      setStatusMsg(res.message || "Kode OTP telah dibuat.");
+      setStatusMsg(res.message || "Kode OTP baru telah dikirimkan ke Gmail Anda.");
       setStep("verify");
-      setCountdown(60); // 60s cooldown for resend
+      setCountdown(45); // 45s cooldown for resend
     } catch (err: any) {
       setErrorMsg(err.message || "Gagal terhubung ke layanan pengiriman email.");
     } finally {
@@ -330,23 +316,8 @@ export default function OtpVerificationModal({
                 </div>
 
                 <div className="text-[12px] text-[#707175] mb-3">
-                  Terkirim ke: <strong className="text-[#0E0F12]">{email}</strong> (Berlaku 5 menit)
+                  Terkirim ke: <strong className="text-[#0E0F12]">{email}</strong> (Berlaku 10 menit)
                 </div>
-
-                {debugCode && (
-                  <div className="mb-3 p-2.5 rounded-xl bg-[#F4F4F5] border border-[#E4E4E7] flex items-center justify-between">
-                    <span className="text-[11px] text-[#52525B]">
-                      Kode Verifikasi: <strong className="font-mono text-[#0E0F12] text-[13px] tracking-wider">{debugCode}</strong>
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() => autofillCode(debugCode)}
-                      className="text-[11px] font-bold text-[#0E0F12] bg-[#D5F066] px-2.5 py-1 rounded-lg hover:brightness-95 cursor-pointer"
-                    >
-                      Isi Otomatis
-                    </button>
-                  </div>
-                )}
 
                 {/* 6 Digit Input Grid */}
                 <div className="grid grid-cols-6 gap-2">
