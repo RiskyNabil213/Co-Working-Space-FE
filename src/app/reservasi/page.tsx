@@ -41,6 +41,7 @@ import {
   getAuthToken,
   getCurrentUser,
   setAuthSession,
+  getSpaceImageUrl,
 } from "@/lib/api";
 import ETicketNotaModal from "@/components/ETicketNotaModal";
 
@@ -145,13 +146,7 @@ export default function UnifiedMemberReservationDashboard() {
           const net = Number(item.total_bayar || gross);
           const discount = Number(item.potongan_diskon || Math.max(0, gross - net));
 
-          const img =
-            item.foto ||
-            (spaceType === "meeting_room"
-              ? "https://images.unsplash.com/photo-1517502884422-41eaead166d4?auto=format&fit=crop&w=600&q=80"
-              : spaceType === "private_office"
-                ? "https://images.unsplash.com/photo-1497215842964-222b430dc094?auto=format&fit=crop&w=600&q=80"
-                : "https://images.unsplash.com/photo-1527192491265-7e15c55b1ed2?auto=format&fit=crop&w=600&q=80");
+          const img = getSpaceImageUrl(item.foto, spaceType);
 
           const formatTimestamp = (dateStr?: string) => {
             if (!dateStr) return "Baru saja";

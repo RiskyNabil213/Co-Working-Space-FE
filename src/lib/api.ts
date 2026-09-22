@@ -10,6 +10,44 @@ if (!rawBaseUrl.startsWith("http://") && !rawBaseUrl.startsWith("https://")) {
 export const API_BASE_URL = rawBaseUrl.replace(/\/api\/?$/, "").replace(/\/+$/, "");
 export const DEFAULT_MAKER_KEY = "mk_default_ukk_2026";
 
+export const FALLBACK_SPACE_IMAGES: Record<string, string> = {
+  desk: "https://images.unsplash.com/photo-1527192491265-7e15c55b1ed2?auto=format&fit=crop&w=1200&q=85",
+  meeting_room: "https://images.unsplash.com/photo-1517502884422-41eaead166d4?auto=format&fit=crop&w=1200&q=85",
+  private_office: "https://images.unsplash.com/photo-1497215842964-222b430dc094?auto=format&fit=crop&w=1200&q=85",
+  default: "https://images.unsplash.com/photo-1497366811353-6870744d04b2?auto=format&fit=crop&w=1200&q=85",
+};
+
+export function getSpaceImageUrl(foto?: string | null, tipe?: string): string {
+  if (!foto || typeof foto !== "string") {
+    return FALLBACK_SPACE_IMAGES[tipe || ""] || FALLBACK_SPACE_IMAGES.default;
+  }
+  const cleanFoto = foto.trim();
+  if (!cleanFoto) {
+    return FALLBACK_SPACE_IMAGES[tipe || ""] || FALLBACK_SPACE_IMAGES.default;
+  }
+  if (
+    cleanFoto.startsWith("http://") ||
+    cleanFoto.startsWith("https://") ||
+    cleanFoto.startsWith("data:")
+  ) {
+    return cleanFoto;
+  }
+  // Check if it's one of the seed placeholder names or types
+  if (cleanFoto.includes("desk") || cleanFoto.includes("flexi") || cleanFoto.includes("station") || tipe === "desk") {
+    return FALLBACK_SPACE_IMAGES.desk;
+  }
+  if (cleanFoto.includes("meeting") || cleanFoto.includes("alpha") || cleanFoto.includes("room") || cleanFoto.includes("boardroom") || tipe === "meeting_room") {
+    return FALLBACK_SPACE_IMAGES.meeting_room;
+  }
+  if (cleanFoto.includes("office") || cleanFoto.includes("suite") || cleanFoto.includes("private") || tipe === "private_office") {
+    return FALLBACK_SPACE_IMAGES.private_office;
+  }
+  if (cleanFoto.startsWith("/")) {
+    return `${API_BASE_URL}${cleanFoto}`;
+  }
+  return `${API_BASE_URL}/uploads/${cleanFoto}`;
+}
+
 // Helper to get active Maker Key
 export function getMakerKey(): string {
   if (typeof window === "undefined") return DEFAULT_MAKER_KEY;

@@ -61,6 +61,7 @@ import {
   spaceApi,
   DiscountApiItem,
   SpaceApiItem,
+  getSpaceImageUrl,
 } from "@/lib/api";
 
 const AVATAR_PRESETS = [
@@ -421,13 +422,7 @@ export default function MemberDashboardPage() {
       location: item.lokasi_coworking || "Moklet Hub Coworking • Sawojajar, Malang",
       deskNumber: `Station #${item.id || "01"}`,
       floor: "Level 1 • Focus Wing",
-      image:
-        item.foto ||
-        (spaceType === "meeting_room"
-          ? "https://images.unsplash.com/photo-1517502884422-41eaead166d4?auto=format&fit=crop&w=600&q=80"
-          : spaceType === "private_office"
-          ? "https://images.unsplash.com/photo-1497215842964-222b430dc094?auto=format&fit=crop&w=600&q=80"
-          : "https://images.unsplash.com/photo-1527192491265-7e15c55b1ed2?auto=format&fit=crop&w=600&q=80"),
+      image: getSpaceImageUrl(item.foto, spaceType),
       date: item.tanggal_reservasi || item.tanggal || "2026-08-30",
       timeSlot: `${item.jam_mulai || "09:00"} – ${item.jam_selesai || "12:00"} WIB`,
       durationHours: dur,
@@ -1005,14 +1000,7 @@ export default function MemberDashboardPage() {
                 >
                   <div className="relative h-[160px] w-full bg-[#0E0F12] overflow-hidden">
                     <img
-                      src={
-                        sp.foto ||
-                        (sp.tipe === "meeting_room"
-                          ? "https://images.unsplash.com/photo-1517502884422-41eaead166d4?auto=format&fit=crop&w=600&q=80"
-                          : sp.tipe === "private_office"
-                          ? "https://images.unsplash.com/photo-1497215842964-222b430dc094?auto=format&fit=crop&w=600&q=80"
-                          : "https://images.unsplash.com/photo-1527192491265-7e15c55b1ed2?auto=format&fit=crop&w=600&q=80")
-                      }
+                      src={getSpaceImageUrl(sp.foto, sp.tipe)}
                       alt={sp.nama_space}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform"
                     />
